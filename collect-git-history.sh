@@ -11,7 +11,7 @@ DEFAULT_SINCE="1.months"
 if [[ -z "$1" ]]
 then
 	echo "ERROR: <base_url> must be exsit."
-	echo "usage: ./weekly-git-history.sh <base_url>"
+	echo "usage: ./collect-git-history.sh <base_url>"
 	exit -1
 else
 	base_dir=$1
@@ -29,7 +29,7 @@ base_dir=$(pwd)
 
 echo ">> base_dir: ${base_dir}"
 
-output=$base_dir/weekly_git_history
+output=$base_dir/git_history
 rm ${output}
 
 arr=($(ls -d */))
