@@ -1,3 +1,4 @@
+#!/bin/bash
 # ./collect_git_history.sh <base_url> [<since>]
 # Collect git history of all git directories under <base_url>.
 #
@@ -11,7 +12,7 @@ DEFAULT_SINCE="1.months"
 if [[ -z "$1" ]]
 then
 	echo "ERROR: <base_url> must be exsit."
-	echo "usage: ./collect-git-history.sh <base_url>"
+	echo "usage: ./collect-git-history.sh <base_url> [since]"
 	exit -1
 else
 	base_dir=$1
@@ -27,10 +28,11 @@ fi
 cd $base_dir
 base_dir=$(pwd)
 
-echo ">> base_dir: ${base_dir}"
-
 output=$base_dir/git_history
 rm ${output}
+
+echo ">> base_dir: ${base_dir}" | tee -a ${output}
+echo "" | tee -a ${output}
 
 arr=($(ls -d */))
 
@@ -52,9 +54,15 @@ for repo in "${arr[@]}"; do
 		# Ignore this folder.
 		continue
 	fi
-	
+
+	if [[ ! -z $(git log --since=${git_log_since}) ]]
+	then
+		origin_repo_name=$(basename `git rev-parse --show-toplevel`)
+		echo "== $origin_repo_name ==" >> ${output}
+	fi
+
 	# format: [yyyy-MM-dd] [repo] commit message
-	git log --pretty=format:"[%ad] [${repo}] %s" --date=format:"%Y-%m-%d" --since=$git_log_since >> $output
+	git log --pretty=format:"%ad: %s" --date=format:"%Y-%m-%d" --since=$git_log_since | sort >> $output
 	
 	if [[ ! -z $(git log --since=${git_log_since}) ]]
 	then
@@ -63,7 +71,8 @@ for repo in "${arr[@]}"; do
 done
 
 # order by commit date
-sort -k 1 -o $output $output
+# sort -k 1 -o $output $output
 
+echo ""
 echo ">> output path: ${output}"
 echo ">> since: ${git_log_since}"
