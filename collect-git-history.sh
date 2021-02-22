@@ -32,6 +32,7 @@ output=$base_dir/git_history
 rm ${output}
 
 echo ">> base_dir: ${base_dir}" | tee -a ${output}
+echo ">> since: ${git_log_since}" | tee -a ${output}
 echo "" | tee -a ${output}
 
 arr=($(ls -d */))
@@ -75,4 +76,3 @@ done
 
 echo ""
 echo ">> output path: ${output}"
-echo ">> since: ${git_log_since}"
